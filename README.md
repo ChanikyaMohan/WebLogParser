@@ -1,8 +1,43 @@
 # WebLogParser
 
     Windows 32/64 bit MySQL installer https://dev.mysql.com/downloads/file/?id=473605
+    
 
-Using JDBC for database connection
+# Database schema
+
+    create database weblog;
+
+    use weblog;
+
+    show tables;
+
+    CREATE TABLE `ipadresses` (
+        `ip_id` INT NOT NULL,
+        `ip_address` VARCHAR(255) NOT NULL,
+        PRIMARY KEY (`ip_id`)
+    );
+
+    CREATE TABLE `comments` (
+        `comment_id` INT NOT NULL,
+        `comment_code` INT NOT NULL,
+        `comment` VARCHAR(255) NOT NULL,
+        PRIMARY KEY (`comment_id`)
+    );
+
+    CREATE TABLE `log_filtered` (
+        `log_id` INT NOT NULL AUTO_INCREMENT,
+        `ip_address` INT NOT NULL,
+        `comment` INT NOT NULL,
+        `date` DATETIME,
+        PRIMARY KEY (`log_id`)
+    );
+
+    ALTER TABLE `log_filtered` ADD CONSTRAINT `log_filtered_fk0` FOREIGN KEY (`ip_address`) REFERENCES `ipadresses`(`ip_id`);
+
+    ALTER TABLE `log_filtered` ADD CONSTRAINT `log_filtered_fk1` FOREIGN KEY (`comment`) REFERENCES `comments`(`comment_id`);
+
+
+# Using JDBC for database connection
 
     Steps: https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
 Download and install the MySQL server. Just do it the usual way. Remember the port number whenever you've changed it. It's by default 3306.

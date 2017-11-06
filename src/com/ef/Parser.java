@@ -1,5 +1,4 @@
 package com.ef;
-
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -30,8 +29,9 @@ public class Parser {
 			//read log file and build an object
 			Log logfile = new Log("C:\\Users\\konya\\workspace\\WebServerLogParser\\access.log");
 
-			logfile.mapIpAddressAgainstComment(startDate,duration,threshold);
-			System.out.println(logfile.getRecordsBtnDuration(startDate, duration));
+			logfile.ipAddressToComment(startDate,duration,threshold);
+//			System.out.println(logfile.getRecordsBtnDuration(startDate, duration));
+
 		}
 
 	}

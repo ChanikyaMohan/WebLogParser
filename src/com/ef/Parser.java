@@ -28,8 +28,9 @@ public class Parser {
 			int threshold = Integer.parseInt(arguments.get("threshold"));
 
 			//read log file and build an object
-			Log logfile = new Log("C:\\Users\\konya\\workspace\\WebServerLogParser\\access.log",startDate,duration,threshold);
+			Log logfile = new Log("C:\\Users\\konya\\workspace\\WebServerLogParser\\access.log");
 
+			logfile.mapIpAddressAgainstComment(startDate,duration,threshold);
 			System.out.println(logfile.getRecordsBtnDuration(startDate, duration));
 		}
 

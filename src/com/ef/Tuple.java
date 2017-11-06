@@ -17,6 +17,10 @@ public class Tuple {
 		return ipAddress;
 	}
 
+	public int getResponseCode(){
+		return responseCode;
+	}
+
 	Tuple(String lineInLogFile) throws ParseException{
 		HashMap<String,String> split = splitLineToValues(lineInLogFile);
 		this.dateTime = dateFormat.parse(split.get("dateTime"));

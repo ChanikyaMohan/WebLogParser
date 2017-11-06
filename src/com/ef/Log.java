@@ -20,17 +20,17 @@ public class Log {
 	public List<Tuple> loglist= null;
 	public String fileName;
 
-	public String duration;
-	public int threshold;
-	public String DateTime;
+//	public String duration;
+//	public int threshold;
+//	public String DateTime;
 
-	Log(String fileName, String DateTime, String duration, int threshold) throws ParseException{
+	Log(String fileName) throws ParseException{
 		this.fileName = fileName;
 		this.loglist = new ArrayList<Tuple>();
 
-		this.duration = duration;
-		this.threshold = threshold;
-		this.DateTime = DateTime;
+//		this.duration = duration;
+//		this.threshold = threshold;
+//		this.DateTime = DateTime;
 
 		readLogFile();
 	}
@@ -71,21 +71,24 @@ public class Log {
 						);
 	 }
 
-	 private LocalDateTime convertDateToLocalTime(String date){
-			return LocalDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
+	private LocalDateTime convertDateToLocalTime(String date){
+		return LocalDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
 							LocalDateTime.now().toLocalTime()
 							);
-		}
-	 private LocalDateTime convertDateToLocalTime(Date date){
-			return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		}
+	}
 
-	 private LocalDateTime computeEndDate(String startDate,String duration){
-		 if(duration=="hourly")
-			 return convertDateToLocalTime(startDate).plusHours(1);
-		 else if(duration=="daily")
-			return convertDateToLocalTime(startDate).plusDays(1);
-		 return null;
+	private LocalDateTime convertDateToLocalTime(Date date){
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	}
+
+	private LocalDateTime computeEndDate(String startDate,String duration){
+		 LocalDateTime d;
+		 switch(duration){
+		 	case "hourly":  d = convertDateToLocalTime(startDate).plusHours(1); break;
+		 	case "daily": d = convertDateToLocalTime(startDate).plusDays(1); break;
+		 	default: d = null;
+		 }
+		 return d;
 	}
 
 	 public HashMap<String,List<Tuple>> groupRecordsByIpAddress(String startDate,String duration, int threshold){
@@ -99,5 +102,34 @@ public class Log {
 	 public HashMap<String,List<Tuple>> groupRecordsByIpAddress(String startDate,String duration){
 			return (HashMap<String, List<Tuple>>) getRecordsBtnDuration(startDate,duration)
 					.collect(Collectors.groupingBy(Tuple::getIpAddress));
+		}
+
+
+
+
+	 public void mapIpAddressAgainstComment(String startDate,String duration, int threshold){
+		 List<OutputObject> comments=new ArrayList<OutputObject>();
+		 int ind = startDate.indexOf('.');
+		 char[] datearr = startDate.toCharArray();
+		 datearr[ind] = ' ';
+		 startDate = String.valueOf(datearr);
+		 startDate = startDate+".000";
+		groupRecordsByIpAddress(startDate,duration,threshold)
+					.entrySet()
+		            .stream().forEach(e->{
+		            				e.getValue().stream().distinct()
+		            				.collect(Collectors.groupingBy(Tuple::getResponseCode))
+		            				.entrySet().stream().forEach(leSet->{
+
+		            				OutputObject comment = new OutputObject(e.getKey(),leSet.getKey().toString());
+		            				comments.add(comment);
+	            				});
+
+		            		});
+
+
+		System.out.println("  IP      :      COMMENT  ");
+		comments.stream().forEachOrdered(c->System.out.println(c.ipAdress+" : "+c.comment));
+
 		}
 }

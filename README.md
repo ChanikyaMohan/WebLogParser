@@ -51,12 +51,14 @@ CREATE DATABASE javabase DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
    4) Determine the JDBC URL. To connect the MySQL database using Java you need an JDBC URL in the following syntax:
 
-jdbc:mysql://hostname:port/databasename
-hostname: The hostname where MySQL server is installed.
+    jdbc:mysql://hostname:port/databasename
+    hostname: The hostname where MySQL server is installed.
+    
 If it's installed at the same machine where you run the Java code, then you can just use localhost. It can also be an IP address like 127.0.0.1.
 If you encounter connectivity problems and using 127.0.0.1 instead of localhost solved it, then you've a problem in your network/DNS/hosts config.
-port: The TCP/IP port where MySQL server listens on. This is by default 3306.
-databasename: The name of the database you'd like to connect to. That's javabase.
+
+    port: The TCP/IP port where MySQL server listens on. This is by default 3306.
+    databasename: The name of the database you'd like to connect to. That's javabase.
 So the final URL should look like:
     jdbc:mysql://localhost:3306/javabase
 

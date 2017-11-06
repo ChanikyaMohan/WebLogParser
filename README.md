@@ -40,53 +40,51 @@
 # Using JDBC for database connection
 
     Steps: https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
-Download and install the MySQL server. Just do it the usual way. Remember the port number whenever you've changed it. It's by default 3306.
-Download the JDBC driver and put in classpath, extract the ZIP file and put the containing JAR file in the classpath. The vendor-specific JDBC driver is a concrete implementation of the JDBC API (tutorial here).
+   
+   1) Download and install the MySQL server. Just do it the usual way. Remember the port number whenever you've changed it. It's by default 3306.
+   2) Download the JDBC driver and put in classpath, extract the ZIP file and put the containing JAR file in the classpath. The vendor-specific JDBC driver is a concrete implementation of the JDBC API (tutorial here).
 
 If you're using an IDE like Eclipse or Netbeans, then you can add it to the classpath by adding the JAR file as Library to the Build Path in project's properties.
 
-If you're doing it "plain vanilla" in the command console, then you need to specify the path to the JAR file in the -cp or -classpath argument when executing your Java application.
-
-java -cp .;/path/to/mysql-connector.jar com.example.YourClass
-The . is just there to add the current directory to the classpath as well so that it can locate com.example.YourClass and the ; is the classpath separator as it is in Windows. In Unix and clones : should be used.
-Create a database in MySQL. Let's create a database javabase. You of course want World Domination, so let's use UTF-8 as well.
+   3) Create a database in MySQL. Let's create a database javabase. You of course want World Domination, so let's use UTF-8 as well.
 CREATE DATABASE javabase DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-Create an user for Java and grant it access. Simply because using root is a bad practice.
 
-CREATE USER 'java'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL ON javabase.* TO 'java'@'localhost' IDENTIFIED BY 'password';
-Yes, java is the username and password is the password here.
-Determine the JDBC URL. To connect the MySQL database using Java you need an JDBC URL in the following syntax:
+   4) Determine the JDBC URL. To connect the MySQL database using Java you need an JDBC URL in the following syntax:
 
 jdbc:mysql://hostname:port/databasename
-hostname: The hostname where MySQL server is installed. If it's installed at the same machine where you run the Java code, then you can just use localhost. It can also be an IP address like 127.0.0.1. If you encounter connectivity problems and using 127.0.0.1 instead of localhost solved it, then you've a problem in your network/DNS/hosts config.
+hostname: The hostname where MySQL server is installed.
+If it's installed at the same machine where you run the Java code, then you can just use localhost. It can also be an IP address like 127.0.0.1.
+If you encounter connectivity problems and using 127.0.0.1 instead of localhost solved it, then you've a problem in your network/DNS/hosts config.
 port: The TCP/IP port where MySQL server listens on. This is by default 3306.
 databasename: The name of the database you'd like to connect to. That's javabase.
 So the final URL should look like:
-jdbc:mysql://localhost:3306/javabase
-Test the connection to MySQL using Java. Create a simple Java class with a main() method to test the connection.
+    jdbc:mysql://localhost:3306/javabase
 
-String url = "jdbc:mysql://localhost:3306/javabase";
-String username = "java";
-String password = "password";
+   5) Test the connection to MySQL using Java. Create a simple Java class with a main() method to test the connection.
 
-System.out.println("Connecting database...");
+    String url = "jdbc:mysql://localhost:3306/javabase";
+    String username = "java";
+    String password = "password";
 
-try (Connection connection = DriverManager.getConnection(url, username, password)) {
-    System.out.println("Database connected!");
-} catch (SQLException e) {
-    throw new IllegalStateException("Cannot connect the database!", e);
-}
+    System.out.println("Connecting database...");
+
+    try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        System.out.println("Database connected!");
+    } catch (SQLException e) {
+        throw new IllegalStateException("Cannot connect the database!", e);
+    }
+
 If you get a SQLException: No suitable driver, then it means that either the JDBC driver wasn't autoloaded at all or that the JDBC URL is wrong (i.e. it wasn't recognized by any of the loaded drivers). Normally, a JDBC 4.0 driver should be autoloaded when you just drop it in runtime classpath. To exclude one and other, you can always manually load it as below:
 
-System.out.println("Loading driver...");
+    System.out.println("Loading driver...");
 
-try {
-    Class.forName("com.mysql.jdbc.Driver");
-    System.out.println("Driver loaded!");
-} catch (ClassNotFoundException e) {
-    throw new IllegalStateException("Cannot find the driver in the classpath!", e);
-}
+    try {
+        Class.forName("com.mysql.jdbc.Driver");
+        System.out.println("Driver loaded!");
+    } catch (ClassNotFoundException e) {
+        throw new IllegalStateException("Cannot find the driver in the classpath!", e);
+    }
+    
 Note that the newInstance() call is not needed here. It's just to fix the old and buggy org.gjt.mm.mysql.Driver. Explanation here. If this line throws ClassNotFoundException, then the JAR file containing the JDBC driver class is simply not been placed in the classpath.
 
 Note that you don't need to load the driver everytime before connecting. Just only once during application startup is enough.

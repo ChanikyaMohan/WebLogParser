@@ -1,8 +1,10 @@
 # WebLogParser
 
+    Windows 32/64 bit MySQL installer https://dev.mysql.com/downloads/file/?id=473605
+
 Using JDBC for database connection
 
-Steps: https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
+    Steps: https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
 Download and install the MySQL server. Just do it the usual way. Remember the port number whenever you've changed it. It's by default 3306.
 Download the JDBC driver and put in classpath, extract the ZIP file and put the containing JAR file in the classpath. The vendor-specific JDBC driver is a concrete implementation of the JDBC API (tutorial here).
 

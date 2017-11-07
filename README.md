@@ -98,31 +98,4 @@ If you get a SQLException: No suitable driver, then it means that either the JDB
     } catch (ClassNotFoundException e) {
         throw new IllegalStateException("Cannot find the driver in the classpath!", e);
     }
-    
-Note that the newInstance() call is not needed here. It's just to fix the old and buggy org.gjt.mm.mysql.Driver. Explanation here. If this line throws ClassNotFoundException, then the JAR file containing the JDBC driver class is simply not been placed in the classpath.
 
-Note that you don't need to load the driver everytime before connecting. Just only once during application startup is enough.
-
-If you get a SQLException: Connection refused or Connection timed out or a MySQL specific CommunicationsException: 
-Communications link failure, then it means that the DB isn't reachable at all. This can have one or more of the following causes:
-
-IP address or hostname in JDBC URL is wrong.
-Hostname in JDBC URL is not recognized by local DNS server.
-Port number is missing or wrong in JDBC URL.
-DB server is down.
-DB server doesn't accept TCP/IP connections.
-DB server has run out of connections.
-Something in between Java and DB is blocking connections, e.g. a firewall or proxy. 
-
-To solve the one or the other, follow the following advices:
-
-Verify and test them with ping.
-Refresh DNS or use IP address in JDBC URL instead.
-Verify it based on my.cnf of MySQL DB.
-Start the DB.
-Verify if mysqld is started without the --skip-networking option.
-Restart the DB and fix your code accordingly that it closes connections in finally.
-Disable firewall and/or configure firewall/proxy to allow/forward the port. 
-
-Note that closing the Connection is extremely important. If you don't close connections and keep getting a lot of them in a short time, then the database may run out of connections and your application may break. Always acquire the Connection in a try-with-resources statement. Or if you're not on Java 7 yet, explicitly close it in finally of a try-finally block. Closing in finally is just to ensure that it get closed as well in case of an exception. This also applies to Statement, PreparedStatement and ResultSet.
-That was it as far the connectivity concerns. You can find here a more advanced tutorial how to load and store fullworthy Java model objects in a database with help of a basic DAO class.

@@ -21,6 +21,10 @@ public class Tuple {
 		return responseCode;
 	}
 
+	public Date getDate(){
+		return dateTime;
+	}
+
 	Tuple(String lineInLogFile) throws ParseException{
 		HashMap<String,String> split = splitLineToValues(lineInLogFile);
 		this.dateTime = dateFormat.parse(split.get("dateTime"));

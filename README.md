@@ -3,23 +3,26 @@
     Windows 32/64 bit MySQL installer https://dev.mysql.com/downloads/file/?id=473605
     
 
-# Database schema
-
-    create database weblog;
+# Database schemacreate database weblog;
 
     use weblog;
 
     show tables;
 
-    CREATE TABLE `ipadresses` (
-        `ip_id` INT NOT NULL,
+    drop table ipaddresses;
+    drop table comments;
+    drop table log_filtered;
+    drop table log_dates;
+
+    CREATE TABLE `ipaddresses` (
+        `ip_id` INT NOT NULL AUTO_INCREMENT,
         `ip_address` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`ip_id`)
     );
 
     CREATE TABLE `comments` (
-        `comment_id` INT NOT NULL,
-        `comment_code` INT NOT NULL,
+        `comment_id` INT NOT NULL AUTO_INCREMENT,
+        `comment_code` INT NOT NULL DEFAULT '0',
         `comment` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`comment_id`)
     );
@@ -28,13 +31,22 @@
         `log_id` INT NOT NULL AUTO_INCREMENT,
         `ip_address` INT NOT NULL,
         `comment` INT NOT NULL,
-        `date` DATETIME,
         PRIMARY KEY (`log_id`)
     );
 
-    ALTER TABLE `log_filtered` ADD CONSTRAINT `log_filtered_fk0` FOREIGN KEY (`ip_address`) REFERENCES `ipadresses`(`ip_id`);
+    CREATE TABLE `log_dates` (
+        `log_date_id` INT NOT NULL AUTO_INCREMENT,
+        `log_id` INT NOT NULL,
+        `date_time` DATETIME,
+        PRIMARY KEY (`log_date_id`)
+    );
+
+    ALTER TABLE `log_filtered` ADD CONSTRAINT `log_filtered_fk0` FOREIGN KEY (`ip_address`) REFERENCES `ipaddresses`(`ip_id`);
 
     ALTER TABLE `log_filtered` ADD CONSTRAINT `log_filtered_fk1` FOREIGN KEY (`comment`) REFERENCES `comments`(`comment_id`);
+
+    ALTER TABLE `log_dates` ADD CONSTRAINT `log_dates_fk0` FOREIGN KEY (`log_id`) REFERENCES `log_filtered`(`log_id`);
+
 
 
 # Using JDBC for database connection
